@@ -20,3 +20,5 @@ venv/
 *.sqlite
 *.sqlite3
 music/
+
+storage/

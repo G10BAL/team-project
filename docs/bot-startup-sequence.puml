@@ -1,32 +1,36 @@
 @startuml
-title Resonance - actual startup and /ping flow
-skinparam shadowing false
-actor Operator
+!include diagram-style.iuml
+hide footbox
+actor "Оператор" as Operator
 participant "Docker Compose" as Compose
 participant "bot.main" as Main
 participant "ResonanceBot\n(discord.py)" as Bot
 participant "Discord REST API" as REST
 participant "Discord Gateway" as Gateway
-actor "Discord user" as User
+actor "Користувач" as User
 Operator -> Compose : docker compose up --build -d
-Compose -> Main : python -m bot.main\n.env variables supplied to process
-Main -> Main : load_dotenv()\nread token and guild ID
-alt token or guild ID missing
-  Main --> Compose : RuntimeError, process exits
-  note right of Compose : restart: unless-stopped retries\nInspect logs and fix configuration.
-else both variables present
-  Main -> Bot : construct bot and register /ping
+Compose -> Main : python -m bot.main\nЗмінні з .env
+Main -> Main : load_dotenv()\nЧитання токена та коду сервера
+alt токен або код сервера відсутній
+  Main --> Compose : RuntimeError; завершення процесу
+  note right of Compose
+    Автоперезапуск: unless-stopped.
+    Конфігурацію слід виправити.
+  end note
+else обидві змінні задані
+  Main -> Bot : Створення бота; реєстрація /ping
   Main -> Bot : bot.run(token)
-  Bot -> REST : authenticate bot
-  Bot -> Bot : setup_hook()\ncopy global commands to guild
-  Bot -> REST : sync commands to test guild
-  REST --> Bot : synchronization result
-  Bot -> Gateway : connect WebSocket
-  Gateway --> Bot : READY event
-  Bot -> Bot : on_ready(): log bot identity
-  User -> Gateway : invoke /ping in test guild
-  Gateway -> Bot : interaction event
+  Bot -> REST : Автентифікація
+  Bot -> Bot : setup_hook()\nКопіювання команд для сервера
+  Bot -> REST : Синхронізація команд
+  REST --> Bot : Результат синхронізації
+  Bot -> Gateway : Підключення WebSocket
+  Gateway --> Bot : Подія READY
+  Bot -> Bot : on_ready(): запис до журналу
+  User -> Gateway : Команда /ping
+  Gateway -> Bot : Подія взаємодії
   Bot -> REST : interaction.response.send_message("Pong!")
   REST --> User : Pong!
 end
+caption Рисунок 3 — Діаграма послідовності запуску бота та команди /ping
 @enduml

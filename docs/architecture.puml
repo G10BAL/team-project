@@ -1,34 +1,30 @@
 @startuml
+!include diagram-style.iuml
 !pragma layout smetana
-title Resonance - Docker deployment
-skinparam shadowing false
-node "Local installation" {
-  artifact ".env\nDiscord token and test guild ID" as env
-  folder "Host music directory\nMUSIC_DIRECTORY" as music
-  database "Named volume\nresonance-data" as data
-  node "Docker Compose: bot\nPython 3.12, unprivileged app user" {
+node "Локальний комп'ютер" {
+  artifact ".env\nТокен і код сервера Discord" as env
+  folder "Музична директорія\nMUSIC_DIRECTORY" as music
+  database "Том даних\nresonance-data" as data
+  node "Контейнер Docker Compose: bot\nPython 3.12; користувач app" {
     component "bot.main\nResonanceBot + /ping" as bot
     component "discord.py[voice]" as discord
-    component "FFmpeg + libopus\ninstalled for future playback" as audio
-    folder "/music (read-only)" as mount
-    folder "/app/data (writable)" as storage
+    component "FFmpeg + libopus\nДля майбутнього плеєра" as audio
+    folder "/music\nЛише читання" as mount
+    folder "/app/data\nЧитання та запис" as storage
   }
 }
-cloud "Discord" as platform
-actor "Discord user" as user
+cloud "Платформа Discord" as platform
+actor "Користувач" as user
 user --> platform : /ping
-platform <--> discord : HTTPS / Gateway WebSocket\nvoice UDP when implemented
+platform <--> discord : HTTPS / WebSocket\nГолосовий зв'язок: UDP (план)
 bot --> discord
-music --> mount : bind mount
-storage --> data : persistent volume
-env --> bot : environment variables
-note bottom of storage
-Reserved for database and derived indexes.
-Current bot does not persist data or scan /music.
-No SQLCipher integration exists yet.
-end note
-note bottom of audio
-No host audio device or published ports required.
-Playback commands are not implemented yet.
-end note
+music --> mount : Монтування
+storage --> data : Збереження даних
+env --> bot : Змінні середовища
+legend bottom
+/app/data — місце для БД та індексів; збереження даних ще не реалізовано.
+Плеєр, сканування музики та інтеграцію SQLCipher заплановано.
+Звуковий пристрій і публікація портів контейнера не потрібні.
+endlegend
+caption Рисунок 1 — Діаграма розгортання Resonance
 @enduml

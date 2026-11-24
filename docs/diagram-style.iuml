@@ -1,0 +1,32 @@
+/' Оформлення рисунків: ДСТУ 3008:2015, розділ 7.5.
+   Монохромність і Liberation Serif — вибір проєкту для друку.
+   Нумерація й підписи задаються в кожній діаграмі. '/
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName Liberation Serif
+skinparam defaultFontSize 14
+skinparam defaultFontColor black
+skinparam ArrowColor black
+skinparam dpi 150
+skinparam captionFontName Liberation Serif
+skinparam captionFontSize 14
+skinparam captionFontStyle plain
+skinparam NoteBackgroundColor white
+skinparam NoteBorderColor black
+skinparam classBackgroundColor white
+skinparam componentBackgroundColor white
+skinparam nodeBackgroundColor white
+skinparam databaseBackgroundColor white
+skinparam artifactBackgroundColor white
+skinparam folderBackgroundColor white
+skinparam packageBackgroundColor white
+skinparam sequenceParticipantBackgroundColor white
+skinparam sequenceGroupBackgroundColor white
+skinparam sequenceGroupBodyBackgroundColor white
+skinparam sequenceLifeLineBackgroundColor white
+skinparam sequenceLifeLineBorderColor black
+skinparam sequenceMessageAlign center
+skinparam actorBackgroundColor white
+skinparam cloudBackgroundColor white

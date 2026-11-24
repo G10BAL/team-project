@@ -1,36 +1,36 @@
 @startuml
+!include diagram-style.iuml
 !pragma layout smetana
-title Resonance - database UML class diagram (PR #26 draft)
 skinparam classAttributeIconSize 0
-skinparam shadowing false
+hide circle
 hide methods
-class users <<table>> {
+class users <<таблиця>> {
   id : INTEGER <<PK>>
-  discord_id : TEXT <<unique>>
-  pseudonym_id : TEXT <<unique>>
+  discord_id : TEXT <<унікальне>>
+  pseudonym_id : TEXT <<унікальне>>
   participant_group : TEXT
   created_at : TEXT
 }
-class tracks <<table>> {
+class tracks <<таблиця>> {
   id : INTEGER <<PK>>
   title : TEXT
-  artist : TEXT [nullable]
-  genre : TEXT [nullable]
-  tags : TEXT [nullable]
-  file_path : TEXT <<unique>>
-  duration_seconds : INTEGER [nullable, > 0]
+  artist : TEXT [може бути NULL]
+  genre : TEXT [може бути NULL]
+  tags : TEXT [може бути NULL]
+  file_path : TEXT <<унікальне>>
+  duration_seconds : INTEGER [може бути NULL, > 0]
   created_at : TEXT
 }
-class listening_sessions <<table>> {
+class listening_sessions <<таблиця>> {
   id : INTEGER <<PK>>
   user_id : INTEGER <<FK>>
   track_id : INTEGER <<FK>>
   started_at : TEXT
-  finished_at : TEXT [nullable]
+  finished_at : TEXT [може бути NULL]
   listened_seconds : INTEGER [>= 0]
   status : TEXT
 }
-class ratings <<table>> {
+class ratings <<таблиця>> {
   id : INTEGER <<PK>>
   user_id : INTEGER <<FK>>
   track_id : INTEGER <<FK>>
@@ -39,19 +39,19 @@ class ratings <<table>> {
   updated_at : TEXT
   {field} UNIQUE(user_id, track_id)
 }
-class favourites <<table>> {
+class favourites <<таблиця>> {
   user_id : INTEGER <<PK, FK>>
   track_id : INTEGER <<PK, FK>>
   added_at : TEXT
 }
-class recommendation_lists <<table>> {
+class recommendation_lists <<таблиця>> {
   id : INTEGER <<PK>>
   user_id : INTEGER <<FK>>
   algorithm : TEXT [baseline | tfidf]
-  experiment_id : TEXT [nullable]
+  experiment_id : TEXT [може бути NULL]
   created_at : TEXT
 }
-class recommendation_items <<table>> {
+class recommendation_items <<таблиця>> {
   id : INTEGER <<PK>>
   list_id : INTEGER <<FK>>
   track_id : INTEGER <<FK>>
@@ -59,7 +59,7 @@ class recommendation_items <<table>> {
   {field} UNIQUE(list_id, rank)
   {field} UNIQUE(list_id, track_id)
 }
-class v_experiment_export <<view>> {
+class v_experiment_export <<подання>> {
   pseudonym_id
   participant_group
   algorithm
@@ -67,7 +67,7 @@ class v_experiment_export <<view>> {
   list_id
   track_id
   position
-  rating [nullable]
+  rating [може бути NULL]
   event_timestamp
 }
 users "1" -- "0..*" listening_sessions
@@ -84,13 +84,19 @@ v_experiment_export ..> recommendation_lists
 v_experiment_export ..> users
 v_experiment_export ..> ratings : LEFT JOIN (user, track)
 note bottom of listening_sessions
-PR #26 records one track playback per row.
-A separate session/events design is only a proposal
-in the supplied project context, not this SQL draft.
+Проєкт схеми з PR № 26.
+Один рядок — відтворення одного треку.
+Окремі події прослуховування ще не виділено.
 status: playing | finished | skipped
 end note
 note bottom of users
 participant_group: participant | team
-All foreign keys use ON DELETE CASCADE.
+Для всіх зовнішніх ключів: ON DELETE CASCADE.
 end note
+legend bottom
+PK — первинний ключ; FK — зовнішній ключ.
+NULL — відсутнє значення; UNIQUE — обмеження унікальності.
+1 — один запис; 0..* — нуль або більше записів.
+endlegend
+caption Рисунок 4 — Діаграма класів структури бази даних Resonance
 @enduml

@@ -1,0 +1,30 @@
+@startuml
+!include diagram-style.iuml
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 90
+node "Local host" {
+  artifact ".env\nDiscord token and guild ID" as env
+  folder "Music directory\nMUSIC_DIRECTORY" as music
+  database "Data volume\nresonance-data" as data
+  node "Docker Compose container: bot\nPython 3.12; user app" {
+    component "bot.main\nResonanceBot + /ping" as bot
+    component "discord.py[voice]" as discord
+    component "FFmpeg" as ffmpeg
+    component "libopus" as opus
+    folder "/music\nRead-only" as mount
+    folder "/app/data\nRead-write" as storage
+  }
+}
+cloud "Discord" as platform
+actor "User" as user
+user --> platform : /ping
+platform <--> discord : HTTPS / WS\nVoice UDP
+bot --> discord
+discord ..> ffmpeg : Decode
+ffmpeg ..> mount : Read files
+discord ..> opus : Encode
+music -right-> mount : Bind mount
+storage --> data : Persistent storage
+env --> bot
+@enduml

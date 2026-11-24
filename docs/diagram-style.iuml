@@ -1,0 +1,25 @@
+' Shared print styling for UML diagrams.
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName Liberation Serif
+skinparam defaultFontSize 14
+skinparam defaultFontColor black
+skinparam ArrowColor black
+skinparam dpi 150
+skinparam classBackgroundColor white
+skinparam componentBackgroundColor white
+skinparam nodeBackgroundColor white
+skinparam databaseBackgroundColor white
+skinparam artifactBackgroundColor white
+skinparam folderBackgroundColor white
+skinparam packageBackgroundColor white
+skinparam sequenceParticipantBackgroundColor white
+skinparam sequenceGroupBackgroundColor white
+skinparam sequenceGroupBodyBackgroundColor white
+skinparam sequenceLifeLineBackgroundColor white
+skinparam sequenceLifeLineBorderColor black
+skinparam sequenceMessageAlign center
+skinparam actorBackgroundColor white
+skinparam cloudBackgroundColor white

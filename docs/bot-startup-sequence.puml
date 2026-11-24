@@ -1,0 +1,31 @@
+@startuml
+!include diagram-style.iuml
+hide footbox
+actor "Operator" as Operator
+participant "Docker Compose" as Compose
+participant "bot.main" as Main
+participant "ResonanceBot\n(discord.py)" as Bot
+participant "Discord REST API" as REST
+participant "Discord Gateway" as Gateway
+actor "User" as User
+Operator -> Compose : docker compose up --build -d
+Compose -> Main : python -m bot.main\nEnvironment from .env
+Main -> Main : load_dotenv()\nRead token and guild ID
+alt token or guild ID missing
+  Main --> Compose : RuntimeError; process exits
+else both variables set
+  Main -> Bot : Create bot; register /ping
+  Main -> Bot : bot.run(token)
+  Bot -> REST : Authenticate
+  Bot -> Bot : setup_hook()\nCopy commands to guild
+  Bot -> REST : Sync guild commands
+  REST --> Bot : Sync result
+  Bot -> Gateway : Connect WebSocket
+  Gateway --> Bot : READY event
+  Bot -> Bot : on_ready(): log bot identity
+  User -> Gateway : /ping
+  Gateway -> Bot : Interaction event
+  Bot -> REST : interaction.response.send_message("Pong!")
+  REST --> User : Pong!
+end
+@enduml

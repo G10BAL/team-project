@@ -1,0 +1,18 @@
+services:
+  bot:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - resonance-data:/app/data
+      - type: bind
+        source: ${MUSIC_DIRECTORY:-./music}
+        target: /music
+        read_only: true
+        bind:
+          create_host_path: false
+    init: true
+    restart: unless-stopped
+
+volumes:
+  resonance-data:

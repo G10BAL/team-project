@@ -1,0 +1,32 @@
+@startuml
+!include diagram-style.iuml
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 70
+skinparam componentStyle uml2
+actor "Listener" as Listener
+cloud "Discord" as Discord
+package "Local Python application" {
+  component "Discord adapter\nbot.main / ResonanceBot / ping" as adapter <<implemented>>
+  component "Player and library\nQueue, controls, file discovery" as player <<planned>>
+  component "User and music data\nProfiles, ratings, history" as users <<planned>>
+  component "Recommendations and analytics\nBaseline, TF-IDF, CSV" as recs <<planned>>
+}
+database "SQLite" as db
+folder "Local music" as music
+artifact "Experiment results (CSV)" as csv
+Listener --> Discord
+Discord <--> adapter
+adapter ..> player
+adapter ..> users
+adapter ..> recs
+player .down.> music
+player ..> users : Events
+users .down.> db
+recs ..> db : Ratings
+recs .down.> csv
+player -[hidden]right-> users
+users -[hidden]right-> recs
+music -[hidden]right-> db
+db -[hidden]right-> csv
+@enduml

@@ -1,0 +1,27 @@
+@startuml Resonance deployment
+title Resonance — deployment diagram
+
+node "Host" {
+  artifact ".env" as env <<secrets>>
+  node "Docker Compose" {
+    node "Resonance container" {
+      artifact "Python 3.12 slim image" as image
+      component "bot.main" as bot
+      component "discord.py" as discordpy
+      component "python-dotenv" as dotenv
+    }
+  }
+}
+
+cloud "Discord platform" {
+  component "Discord Gateway" as gateway
+  component "Discord REST API" as rest
+}
+
+env --> bot : DISCORD_TOKEN\nDISCORD_GUILD_ID
+bot --> discordpy
+bot --> dotenv : load environment
+discordpy <--> gateway : WebSocket
+discordpy <--> rest : HTTPS
+
+@enduml

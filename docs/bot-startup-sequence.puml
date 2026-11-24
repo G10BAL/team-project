@@ -1,0 +1,21 @@
+@startuml Resonance startup sequence
+title Resonance — startup and command sync
+
+actor Operator
+participant "Docker Compose" as Compose
+participant "ResonanceBot" as Bot
+participant "Discord API" as Discord
+actor "Discord user" as User
+
+Operator -> Compose : docker compose up --build -d
+Compose -> Bot : start container with .env
+Bot -> Bot : load and validate token and guild ID
+Bot -> Discord : connect with bot token
+Bot -> Discord : sync application commands to test guild
+Discord --> Bot : ready
+User -> Discord : /ping
+Discord -> Bot : interaction
+Bot --> Discord : Pong!
+Discord --> User : Pong!
+
+@enduml

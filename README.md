@@ -57,6 +57,20 @@ Never commit your `.env` file.
 python -m bot.main
 ```
 
+## Running with Docker
+
+Create `.env` from the example and set `DISCORD_TOKEN` and `DISCORD_GUILD_ID` as described above. Then build and start the bot:
+
+```bash
+docker compose up --build -d
+```
+
+View logs with `docker compose logs -f bot` and stop the bot with `docker compose down`. Compose reads `.env` into the container; `.dockerignore` keeps local environment files out of the image build context. The container runs as an unprivileged user.
+
+## Architecture diagrams
+
+PlantUML source diagrams are in [`docs/architecture.puml`](docs/architecture.puml) (deployment) and [`docs/bot-startup-sequence.puml`](docs/bot-startup-sequence.puml) (startup, command synchronization, and `/ping` interaction).
+
 ## Commands
 
 | Command | Description |

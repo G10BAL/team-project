@@ -1,30 +1,24 @@
 @startuml
 !include diagram-style.iuml
 !pragma layout smetana
-node "Локальний комп'ютер" {
-  artifact ".env\nТокен і код сервера Discord" as env
-  folder "Музична директорія\nMUSIC_DIRECTORY" as music
-  database "Том даних\nresonance-data" as data
-  node "Контейнер Docker Compose: bot\nPython 3.12; користувач app" {
+node "Local host" {
+  artifact ".env\nDiscord token and guild ID" as env
+  folder "Music directory\nMUSIC_DIRECTORY" as music
+  database "Data volume\nresonance-data" as data
+  node "Docker Compose container: bot\nPython 3.12; user app" {
     component "bot.main\nResonanceBot + /ping" as bot
     component "discord.py[voice]" as discord
-    component "FFmpeg + libopus\nДля майбутнього плеєра" as audio
-    folder "/music\nЛише читання" as mount
-    folder "/app/data\nЧитання та запис" as storage
+    component "FFmpeg + libopus" as audio
+    folder "/music\nRead-only" as mount
+    folder "/app/data\nRead-write" as storage
   }
 }
-cloud "Платформа Discord" as platform
-actor "Користувач" as user
+cloud "Discord" as platform
+actor "User" as user
 user --> platform : /ping
-platform <--> discord : HTTPS / WebSocket\nГолосовий зв'язок: UDP (план)
+platform <--> discord : HTTPS / WebSocket\nVoice: UDP
 bot --> discord
-music --> mount : Монтування
-storage --> data : Збереження даних
-env --> bot : Змінні середовища
-legend bottom
-/app/data — місце для БД та індексів; збереження даних ще не реалізовано.
-Плеєр, сканування музики та інтеграцію SQLCipher заплановано.
-Звуковий пристрій і публікація портів контейнера не потрібні.
-endlegend
-caption Рисунок 1 — Діаграма розгортання Resonance
+music --> mount : Bind mount
+storage --> data : Persistent storage
+env --> bot : Environment variables
 @enduml

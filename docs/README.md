@@ -21,20 +21,11 @@ The container uses the actual entry point `python -m bot.main`, rather than the 
 
 Playback, file discovery, persistence services, recommendation algorithms, and CSV export remain planned. The context proposes separate listening sessions/events, but PR #26 currently stores one track playback per `listening_sessions` row. The diagram preserves the SQL branch's current design. Listening attribution, accepted recommendation semantics, evaluation dataset, and SQLCipher driver/key handling remain team decisions. No optional ChromaDB dependency is added.
 
-## Оформлення за ДСТУ
+## Diagram presentation
 
-Для оформлення рисунків застосовано [ДСТУ 3008:2015, розділ 7.5](https://itt-its.kpi.ua/wp-content/uploads/2023/10/dstu_3008-2015.pdf). Нотацію UML збережено; стандарт регламентує оформлення рисунків у звіті. Наскрізна нумерація 1–4 відповідає п. 7.5.6, а стислі назви під зображенням по центру — п. 7.5.9. Пояснення умовних познак розміщено перед підписом рисунка. Усі PNG містять підпис.
+The PNGs contain only UML elements and English labels. Figure captions, numbering, legends, and explanatory notes are excluded from the images. Add figure captions in the report document so they follow its numbering and formatting. Shared print styling (white background, black lines, Liberation Serif) is defined in `diagram-style.iuml`, which must remain beside the `.puml` files during rendering.
 
-Українські пояснення, біле тло, чорні лінії без тіней і шрифт Liberation Serif обрано для однакового друкованого оформлення. Це рішення проєкту: стандарт допускає як чорно-білі, так і кольорові рисунки. Ідентифікатори коду, таблиць та полів залишено мовою реалізації.
-
-1. Рисунок 1 — Діаграма розгортання Resonance.
-2. Рисунок 2 — Діаграма компонентів Resonance.
-3. Рисунок 3 — Діаграма послідовності запуску бота та команди /ping.
-4. Рисунок 4 — Діаграма класів структури бази даних Resonance.
-
-Під час включення до звіту рисунок слід розміщувати після першого посилання на нього або на найближчій наступній сторінці (п. 7.5.2), на одному аркуші А4 (п. 7.5.5, 7.5.10). Для широких схем оберіть альбомну орієнтацію й перевірте читабельність після масштабування. Не додавайте другий підпис, якщо він уже є у PNG. Якщо рисунки вставляються в розділ чи додаток із власною нумерацією, змініть `caption` у `.puml` та перекомпілюйте. Остаточне розміщення й нумерацію узгоджують із повним звітом та методичними вимогами кафедри.
-
-Спільне оформлення визначено у `diagram-style.iuml`; цей файл має залишатися поряд із `.puml` під час компіляції. Для відтворення шрифту потрібен встановлений Liberation Serif із підтримкою кирилиці.
+The component diagram includes planned modules; playback and persistence are not integrated yet. The deployment diagram shows the prepared voice runtime and storage layout. The database diagram follows the schema draft in PR #26; `listening_sessions` stores one track playback per row. `participant_group` accepts `participant` or `team`, session status accepts `playing`, `finished`, or `skipped`, and all foreign keys use `ON DELETE CASCADE`.
 
 ## Regenerate PNGs locally
 

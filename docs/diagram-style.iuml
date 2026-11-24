@@ -1,6 +1,4 @@
-/' Оформлення рисунків: ДСТУ 3008:2015, розділ 7.5.
-   Монохромність і Liberation Serif — вибір проєкту для друку.
-   Нумерація й підписи задаються в кожній діаграмі. '/
+' Shared print styling for UML diagrams.
 skinparam monochrome true
 skinparam backgroundColor white
 skinparam shadowing false
@@ -10,11 +8,6 @@ skinparam defaultFontSize 14
 skinparam defaultFontColor black
 skinparam ArrowColor black
 skinparam dpi 150
-skinparam captionFontName Liberation Serif
-skinparam captionFontSize 14
-skinparam captionFontStyle plain
-skinparam NoteBackgroundColor white
-skinparam NoteBorderColor black
 skinparam classBackgroundColor white
 skinparam componentBackgroundColor white
 skinparam nodeBackgroundColor white

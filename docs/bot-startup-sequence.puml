@@ -1,36 +1,31 @@
 @startuml
 !include diagram-style.iuml
 hide footbox
-actor "Оператор" as Operator
+actor "Operator" as Operator
 participant "Docker Compose" as Compose
 participant "bot.main" as Main
 participant "ResonanceBot\n(discord.py)" as Bot
 participant "Discord REST API" as REST
 participant "Discord Gateway" as Gateway
-actor "Користувач" as User
+actor "User" as User
 Operator -> Compose : docker compose up --build -d
-Compose -> Main : python -m bot.main\nЗмінні з .env
-Main -> Main : load_dotenv()\nЧитання токена та коду сервера
-alt токен або код сервера відсутній
-  Main --> Compose : RuntimeError; завершення процесу
-  note right of Compose
-    Автоперезапуск: unless-stopped.
-    Конфігурацію слід виправити.
-  end note
-else обидві змінні задані
-  Main -> Bot : Створення бота; реєстрація /ping
+Compose -> Main : python -m bot.main\nEnvironment from .env
+Main -> Main : load_dotenv()\nRead token and guild ID
+alt token or guild ID missing
+  Main --> Compose : RuntimeError; process exits
+else both variables set
+  Main -> Bot : Create bot; register /ping
   Main -> Bot : bot.run(token)
-  Bot -> REST : Автентифікація
-  Bot -> Bot : setup_hook()\nКопіювання команд для сервера
-  Bot -> REST : Синхронізація команд
-  REST --> Bot : Результат синхронізації
-  Bot -> Gateway : Підключення WebSocket
-  Gateway --> Bot : Подія READY
-  Bot -> Bot : on_ready(): запис до журналу
-  User -> Gateway : Команда /ping
-  Gateway -> Bot : Подія взаємодії
+  Bot -> REST : Authenticate
+  Bot -> Bot : setup_hook()\nCopy commands to guild
+  Bot -> REST : Sync guild commands
+  REST --> Bot : Sync result
+  Bot -> Gateway : Connect WebSocket
+  Gateway --> Bot : READY event
+  Bot -> Bot : on_ready(): log bot identity
+  User -> Gateway : /ping
+  Gateway -> Bot : Interaction event
   Bot -> REST : interaction.response.send_message("Pong!")
   REST --> User : Pong!
 end
-caption Рисунок 3 — Діаграма послідовності запуску бота та команди /ping
 @enduml

@@ -4,33 +4,33 @@
 skinparam classAttributeIconSize 0
 hide circle
 hide methods
-class users <<таблиця>> {
+class users <<table>> {
   id : INTEGER <<PK>>
-  discord_id : TEXT <<унікальне>>
-  pseudonym_id : TEXT <<унікальне>>
+  discord_id : TEXT <<unique>>
+  pseudonym_id : TEXT <<unique>>
   participant_group : TEXT
   created_at : TEXT
 }
-class tracks <<таблиця>> {
+class tracks <<table>> {
   id : INTEGER <<PK>>
   title : TEXT
-  artist : TEXT [може бути NULL]
-  genre : TEXT [може бути NULL]
-  tags : TEXT [може бути NULL]
-  file_path : TEXT <<унікальне>>
-  duration_seconds : INTEGER [може бути NULL, > 0]
+  artist : TEXT [nullable]
+  genre : TEXT [nullable]
+  tags : TEXT [nullable]
+  file_path : TEXT <<unique>>
+  duration_seconds : INTEGER [nullable, > 0]
   created_at : TEXT
 }
-class listening_sessions <<таблиця>> {
+class listening_sessions <<table>> {
   id : INTEGER <<PK>>
   user_id : INTEGER <<FK>>
   track_id : INTEGER <<FK>>
   started_at : TEXT
-  finished_at : TEXT [може бути NULL]
+  finished_at : TEXT [nullable]
   listened_seconds : INTEGER [>= 0]
   status : TEXT
 }
-class ratings <<таблиця>> {
+class ratings <<table>> {
   id : INTEGER <<PK>>
   user_id : INTEGER <<FK>>
   track_id : INTEGER <<FK>>
@@ -39,19 +39,19 @@ class ratings <<таблиця>> {
   updated_at : TEXT
   {field} UNIQUE(user_id, track_id)
 }
-class favourites <<таблиця>> {
+class favourites <<table>> {
   user_id : INTEGER <<PK, FK>>
   track_id : INTEGER <<PK, FK>>
   added_at : TEXT
 }
-class recommendation_lists <<таблиця>> {
+class recommendation_lists <<table>> {
   id : INTEGER <<PK>>
   user_id : INTEGER <<FK>>
   algorithm : TEXT [baseline | tfidf]
-  experiment_id : TEXT [може бути NULL]
+  experiment_id : TEXT [nullable]
   created_at : TEXT
 }
-class recommendation_items <<таблиця>> {
+class recommendation_items <<table>> {
   id : INTEGER <<PK>>
   list_id : INTEGER <<FK>>
   track_id : INTEGER <<FK>>
@@ -59,7 +59,7 @@ class recommendation_items <<таблиця>> {
   {field} UNIQUE(list_id, rank)
   {field} UNIQUE(list_id, track_id)
 }
-class v_experiment_export <<подання>> {
+class v_experiment_export <<view>> {
   pseudonym_id
   participant_group
   algorithm
@@ -67,7 +67,7 @@ class v_experiment_export <<подання>> {
   list_id
   track_id
   position
-  rating [може бути NULL]
+  rating [nullable]
   event_timestamp
 }
 users "1" -- "0..*" listening_sessions
@@ -83,20 +83,4 @@ v_experiment_export ..> recommendation_items
 v_experiment_export ..> recommendation_lists
 v_experiment_export ..> users
 v_experiment_export ..> ratings : LEFT JOIN (user, track)
-note bottom of listening_sessions
-Проєкт схеми з PR № 26.
-Один рядок — відтворення одного треку.
-Окремі події прослуховування ще не виділено.
-status: playing | finished | skipped
-end note
-note bottom of users
-participant_group: participant | team
-Для всіх зовнішніх ключів: ON DELETE CASCADE.
-end note
-legend bottom
-PK — первинний ключ; FK — зовнішній ключ.
-NULL — відсутнє значення; UNIQUE — обмеження унікальності.
-1 — один запис; 0..* — нуль або більше записів.
-endlegend
-caption Рисунок 4 — Діаграма класів структури бази даних Resonance
 @enduml

@@ -2,39 +2,25 @@
 !include diagram-style.iuml
 !pragma layout smetana
 skinparam componentStyle uml2
-actor "Слухач" as Listener
+actor "Listener" as Listener
 cloud "Discord" as Discord
-package "Локальний застосунок Python" {
-  component "Адаптер Discord\nbot.main / ResonanceBot / ping" as adapter <<реалізовано>>
-  component "Плеєр і бібліотека\nЧерга, керування, пошук файлів" as player <<заплановано>>
-  component "Дані користувачів і музики\nПрофілі, оцінки, історія" as users <<заплановано>>
-  component "Рекомендації та аналітика\nБазовий алгоритм, TF-IDF, CSV" as recs <<заплановано>>
+package "Local Python application" {
+  component "Discord adapter\nbot.main / ResonanceBot / ping" as adapter <<implemented>>
+  component "Player and library\nQueue, controls, file discovery" as player <<planned>>
+  component "User and music data\nProfiles, ratings, history" as users <<planned>>
+  component "Recommendations and analytics\nBaseline, TF-IDF, CSV" as recs <<planned>>
 }
-database "SQLite\nПроєкт схеми з PR № 26" as db
-folder "Локальна музика" as music
-artifact "Результати у CSV\npseudonym_id" as csv
+database "SQLite" as db
+folder "Local music" as music
+artifact "Experiment results (CSV)" as csv
 Listener --> Discord
 Discord <--> adapter
 adapter ..> player
 adapter ..> users
 adapter ..> recs
 player ..> music
-player ..> users : Події відтворення
+player ..> users : Playback events
 users ..> db
-recs ..> db : Оцінки та каталог
+recs ..> db : Ratings and catalogue
 recs ..> csv
-note bottom of db
-Схема: database/initial-schema.
-Доступ до БД ще не реалізовано.
-Драйвер SQLCipher не обрано.
-end note
-note bottom of recs
-Модулі працюватимуть в одному процесі.
-Векторний індекс — можливе розширення.
-end note
-legend bottom
-Суцільні стрілки — наявні взаємодії.
-Пунктирні стрілки — заплановані залежності.
-endlegend
-caption Рисунок 2 — Діаграма компонентів Resonance
 @enduml

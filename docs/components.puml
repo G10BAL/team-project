@@ -1,0 +1,40 @@
+@startuml
+!pragma layout smetana
+title Resonance - logical modules and implementation status
+skinparam componentStyle rectangle
+skinparam shadowing false
+actor Listener
+cloud Discord
+package "One local Python application" {
+  component "Discord adapter\nbot.main / ResonanceBot / ping" as adapter <<implemented>>
+  component "Player and library\nqueue, controls, file discovery" as player <<planned>>
+  component "User and music data\nprofiles, ratings, history" as users <<planned>>
+  component "Recommendations and analytics\nbaseline, TF-IDF, evaluation, CSV" as recs <<planned>>
+}
+database "SQLite\nschema draft: PR #26" as db
+folder "Local music" as music
+artifact "CSV experiments\npseudonym_id" as csv
+Listener --> Discord
+Discord <--> adapter
+adapter ..> player
+adapter ..> users
+adapter ..> recs
+player ..> music
+player ..> users : playback activity
+users ..> db
+recs ..> db : ratings and catalogue
+recs ..> csv
+note bottom of db
+Schema exists on database/initial-schema.
+Runtime database access is not integrated.
+SQLCipher driver / key handling remain undecided.
+end note
+note bottom of recs
+Optional vector index is outside the current scope.
+Logical modules share one process, not microservices.
+end note
+legend right
+Solid arrows: current interactions
+Dotted arrows: planned integrations
+endlegend
+@enduml

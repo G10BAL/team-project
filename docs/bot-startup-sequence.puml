@@ -1,21 +1,32 @@
-@startuml Resonance startup sequence
-title Resonance — startup and command sync
-
+@startuml
+title Resonance - actual startup and /ping flow
+skinparam shadowing false
 actor Operator
 participant "Docker Compose" as Compose
-participant "ResonanceBot" as Bot
-participant "Discord API" as Discord
+participant "bot.main" as Main
+participant "ResonanceBot\n(discord.py)" as Bot
+participant "Discord REST API" as REST
+participant "Discord Gateway" as Gateway
 actor "Discord user" as User
-
 Operator -> Compose : docker compose up --build -d
-Compose -> Bot : start container with .env
-Bot -> Bot : load and validate token and guild ID
-Bot -> Discord : connect with bot token
-Bot -> Discord : sync application commands to test guild
-Discord --> Bot : ready
-User -> Discord : /ping
-Discord -> Bot : interaction
-Bot --> Discord : Pong!
-Discord --> User : Pong!
-
+Compose -> Main : python -m bot.main\n.env variables supplied to process
+Main -> Main : load_dotenv()\nread token and guild ID
+alt token or guild ID missing
+  Main --> Compose : RuntimeError, process exits
+  note right of Compose : restart: unless-stopped retries\nInspect logs and fix configuration.
+else both variables present
+  Main -> Bot : construct bot and register /ping
+  Main -> Bot : bot.run(token)
+  Bot -> REST : authenticate bot
+  Bot -> Bot : setup_hook()\ncopy global commands to guild
+  Bot -> REST : sync commands to test guild
+  REST --> Bot : synchronization result
+  Bot -> Gateway : connect WebSocket
+  Gateway --> Bot : READY event
+  Bot -> Bot : on_ready(): log bot identity
+  User -> Gateway : invoke /ping in test guild
+  Gateway -> Bot : interaction event
+  Bot -> REST : interaction.response.send_message("Pong!")
+  REST --> User : Pong!
+end
 @enduml

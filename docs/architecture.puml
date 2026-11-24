@@ -1,6 +1,8 @@
 @startuml
 !include diagram-style.iuml
-!pragma layout smetana
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 90
 node "Local host" {
   artifact ".env\nDiscord token and guild ID" as env
   folder "Music directory\nMUSIC_DIRECTORY" as music
@@ -17,12 +19,12 @@ node "Local host" {
 cloud "Discord" as platform
 actor "User" as user
 user --> platform : /ping
-platform <--> discord : HTTPS / WebSocket\nVoice: UDP
+platform <--> discord : HTTPS / WS\nVoice UDP
 bot --> discord
-discord ..> ffmpeg : Start audio decoder
-ffmpeg ..> mount : Read audio files
-discord ..> opus : Encode PCM to Opus
+discord ..> ffmpeg : Decode
+ffmpeg ..> mount : Read files
+discord ..> opus : Encode
 music -right-> mount : Bind mount
 storage --> data : Persistent storage
-env --> bot : Environment variables
+env --> bot
 @enduml

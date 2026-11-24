@@ -1,6 +1,8 @@
 @startuml
 !include diagram-style.iuml
-!pragma layout smetana
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 70
 skinparam componentStyle uml2
 actor "Listener" as Listener
 cloud "Discord" as Discord
@@ -18,9 +20,13 @@ Discord <--> adapter
 adapter ..> player
 adapter ..> users
 adapter ..> recs
-player ..> music
-player ..> users : Playback events
-users ..> db
-recs ..> db : Ratings and catalogue
-recs ..> csv
+player .down.> music
+player ..> users : Events
+users .down.> db
+recs ..> db : Ratings
+recs .down.> csv
+player -[hidden]right-> users
+users -[hidden]right-> recs
+music -[hidden]right-> db
+db -[hidden]right-> csv
 @enduml

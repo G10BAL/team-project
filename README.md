@@ -90,7 +90,6 @@ See [diagram documentation](docs/README.md) for implementation status, links to 
 - [Deployment PNG](docs/architecture.png) / [source](docs/architecture.puml)
 - [Modules PNG](docs/components.png) / [source](docs/components.puml)
 - [Startup and `/ping` PNG](docs/bot-startup-sequence.png) / [source](docs/bot-startup-sequence.puml)
-- [Database UML PNG](docs/database-model.png) / [source](docs/database-model.puml)
 
 ## Commands
 

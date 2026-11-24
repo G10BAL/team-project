@@ -5,7 +5,7 @@
 These diagrams were reconciled with `Resonance_Codex_Context.md` supplied by the project owner and the repository branches/PRs reviewed on 2026-11-24. The context describes the target project and suggestions; it is not evidence that every feature exists.
 
 - [PR #25](https://github.com/G10BAL/team-project/pull/25), `feature/bot-setup`, merged into `main`: `bot/main.py`, environment loading, guild slash command sync, and `/ping`.
-- [PR #26](https://github.com/G10BAL/team-project/pull/26), `database/initial-schema`, still open at review: `database/initial_structure.sql` and `database/schema.png`. The UML database diagram reproduces that SQL draft; it does not merge or change the other contributor's branch.
+- [PR #26](https://github.com/G10BAL/team-project/pull/26), `database/initial-schema`, still open at review: `database/initial_structure.sql` and `database/schema.png`. The database schema and its diagram are maintained by another contributor in that PR.
 - [PR #27](https://github.com/G10BAL/team-project/pull/27), `feat/docker-uml`: Docker packaging and this documentation.
 
 | Diagram | Editable source | Compiled PNG | Scope |
@@ -13,23 +13,22 @@ These diagrams were reconciled with `Resonance_Codex_Context.md` supplied by the
 | Deployment | [architecture.puml](architecture.puml) | [architecture.png](architecture.png) | Compose, environment, mounts, runtime dependencies, Discord |
 | Components | [components.puml](components.puml) | [components.png](components.png) | Current adapter and planned modules in one local application |
 | Sequence | [bot-startup-sequence.puml](bot-startup-sequence.puml) | [bot-startup-sequence.png](bot-startup-sequence.png) | Existing startup, missing configuration, guild sync, and `/ping` |
-| Database classes | [database-model.puml](database-model.puml) | [database-model.png](database-model.png) | All seven tables, foreign keys, constraints, and export view from PR #26 |
 
 ## Decisions and pending work
 
 The container uses the actual entry point `python -m bot.main`, rather than the illustrative `main.py` from the context. Runtime storage is reserved at `/app/data`; user music is read-only at `/music`. No additional service or external database is introduced.
 
-Playback, file discovery, persistence services, recommendation algorithms, and CSV export remain planned. The context proposes separate listening sessions/events, but PR #26 currently stores one track playback per `listening_sessions` row. The diagram preserves the SQL branch's current design. Listening attribution, accepted recommendation semantics, evaluation dataset, and SQLCipher driver/key handling remain team decisions. No optional ChromaDB dependency is added.
+Playback, file discovery, persistence services, recommendation algorithms, and CSV export remain planned. The context proposes separate listening sessions/events, but PR #26 currently stores one track playback per `listening_sessions` row. Listening attribution, accepted recommendation semantics, evaluation dataset, and SQLCipher driver/key handling remain team decisions. No optional ChromaDB dependency is added.
 
 ## Diagram presentation
 
 The PNGs contain only UML elements and English labels. Figure captions, numbering, legends, and explanatory notes are excluded from the images. Add figure captions in the report document so they follow its numbering and formatting. Shared print styling (white background, black lines, Liberation Serif) is defined in `diagram-style.iuml`, which must remain beside the `.puml` files during rendering.
 
-The component diagram includes planned modules; playback and persistence are not integrated yet. The deployment diagram shows the prepared voice runtime and storage layout. Its dotted audio dependencies describe the planned PCM playback path: discord.py starts FFmpeg to decode files from /music and uses libopus to encode PCM for Discord voice. Playback commands are not implemented yet. The database diagram follows the schema draft in PR #26; `listening_sessions` stores one track playback per row. `participant_group` accepts `participant` or `team`, session status accepts `playing`, `finished`, or `skipped`, and all foreign keys use `ON DELETE CASCADE`.
+The component diagram includes planned modules; playback and persistence are not integrated yet. The deployment diagram shows the prepared voice runtime and storage layout. Its dotted audio dependencies describe the planned PCM playback path: discord.py starts FFmpeg to decode files from /music and uses libopus to encode PCM for Discord voice. Playback commands are not implemented yet.
 
 ## Regenerate PNGs locally
 
-Use Java and an official [PlantUML release JAR](https://github.com/plantuml/plantuml/releases). These PNGs were rendered with PlantUML **1.2026.10**. The diagrams use the bundled Smetana layout engine where needed, so Graphviz is not required. Rendering is local and does not upload diagrams to a web service.
+Use Java and an official [PlantUML release JAR](https://github.com/plantuml/plantuml/releases). These PNGs were rendered with PlantUML **1.2026.10**. Install Graphviz (`dot`) for the orthogonal deployment and component layouts. Sequence messages use horizontal arrows and rectangular self-calls. Rendering is local and does not upload diagrams to a web service.
 
 ```bash
 bash scripts/render-uml.sh /absolute/path/to/plantuml-1.2026.10.jar

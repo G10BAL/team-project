@@ -25,7 +25,7 @@ Playback, file discovery, persistence services, recommendation algorithms, and C
 
 The PNGs contain only UML elements and English labels. Figure captions, numbering, legends, and explanatory notes are excluded from the images. Add figure captions in the report document so they follow its numbering and formatting. Shared print styling (white background, black lines, Liberation Serif) is defined in `diagram-style.iuml`, which must remain beside the `.puml` files during rendering.
 
-The component diagram includes planned modules; playback and persistence are not integrated yet. The deployment diagram shows the prepared voice runtime and storage layout. The database diagram follows the schema draft in PR #26; `listening_sessions` stores one track playback per row. `participant_group` accepts `participant` or `team`, session status accepts `playing`, `finished`, or `skipped`, and all foreign keys use `ON DELETE CASCADE`.
+The component diagram includes planned modules; playback and persistence are not integrated yet. The deployment diagram shows the prepared voice runtime and storage layout. Its dotted audio dependencies describe the planned PCM playback path: discord.py starts FFmpeg to decode files from /music and uses libopus to encode PCM for Discord voice. Playback commands are not implemented yet. The database diagram follows the schema draft in PR #26; `listening_sessions` stores one track playback per row. `participant_group` accepts `participant` or `team`, session status accepts `playing`, `finished`, or `skipped`, and all foreign keys use `ON DELETE CASCADE`.
 
 ## Regenerate PNGs locally
 
